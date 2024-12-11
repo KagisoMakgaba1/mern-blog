@@ -18,7 +18,9 @@ export const updateUser = async (req, res, next) => {
   }
   if (req.body.username) {
     if (req.body.username.length < 7 || req.body.username.length > 20) {
-      return next(errorHandler(400, "Username must be between 7 and 20 characters"));
+      return next(
+        errorHandler(400, "Username must be between 7 and 20 characters")
+      );
     }
     if (req.body.username.includes(" ")) {
       return next(errorHandler(400, "Username cannot contain spaces"));
@@ -27,22 +29,27 @@ export const updateUser = async (req, res, next) => {
       return next(errorHandler(400, "Username must be lowercase"));
     }
     if (req.body.username.match(/[^a-zA-Z0-9]+$/)) {
-      return next(errorHandler(400, "Username can only contain letters and numbers"));
+      return next(
+        errorHandler(400, "Username can only contain letters and numbers")
+      );
     }
-    try {
-      const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
+  }
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
         $set: {
           username: req.body.username,
           email: req.body.email,
           profilePicture: req.body.profilePicture,
           password: req.body.password,
         },
-      }, { new: true });
-      const { password, ...rest } = updatedUser._doc;
-      res.status(200).json(rest);
-    
-    } catch (error) {
-      next(error);
-    }
+      },
+      { new: true }
+    );
+    const { password, ...rest } = updatedUser._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
   }
 };
